@@ -17,6 +17,7 @@ app.use('/uploads', express.static('uploads'));
 // Routes — added in coming days
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/jobs', require('./routes/jobs'));
+app.use('/api/users', require('./routes/users'));
 // app.use('/api/applications', require('./routes/applications'));
 // app.use('/api/admin',        require('./routes/admin'));
 
