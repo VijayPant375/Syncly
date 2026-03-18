@@ -8,6 +8,8 @@ const {
   deleteJob,
 } = require('../controllers/jobsController');
 const { authenticate, authorize } = require('../middleware/auth');
+const { validateJob } = require('../middleware/jobValidation');
+const validate = require('../middleware/validate');
 
 // GET /api/jobs — public
 router.get('/', getAllJobs);
@@ -16,10 +18,10 @@ router.get('/', getAllJobs);
 router.get('/:id', getJobById);
 
 // POST /api/jobs — employers only
-router.post('/', authenticate, authorize('employer', 'admin'), createJob);
+router.post('/', authenticate, authorize('employer', 'admin'), validateJob, validate, createJob);
 
 // PUT /api/jobs/:id — employers only
-router.put('/:id', authenticate, authorize('employer', 'admin'), updateJob);
+router.put('/:id', authenticate, authorize('employer', 'admin'), validateJob, validate, updateJob);
 
 // DELETE /api/jobs/:id — employers only
 router.delete('/:id', authenticate, authorize('employer', 'admin'), deleteJob);
