@@ -1,3 +1,5 @@
+const { validateApplication } = require('../middleware/applicationValidation');
+const validate = require('../middleware/validate');
 const express = require('express');
 const router = express.Router();
 const {
@@ -9,7 +11,7 @@ const {
 const { authenticate, authorize } = require('../middleware/auth');
 
 // POST /api/applications — seeker applies to a job
-router.post('/', authenticate, authorize('seeker'), applyToJob);
+router.post('/', authenticate, authorize('seeker'), validateApplication, validate, applyToJob);
 
 // GET /api/applications/mine — seeker sees their applications
 router.get('/mine', authenticate, authorize('seeker'), getMyApplications);
