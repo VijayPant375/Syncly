@@ -1,8 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
+import ProtectedRoute from './components/ProtectedRoute';
+import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Jobs from './pages/Jobs';
+import JobDetail from './pages/JobDetail';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -19,11 +23,11 @@ function AppRoutes() {
     <>
       <Navbar />
       <Routes>
+        <Route path="/"         element={<Home />} />
         <Route path="/login"    element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/" element={
-          user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
-        } />
+        <Route path="/jobs"     element={<Jobs />} />
+        <Route path="/jobs/:id" element={<JobDetail />} />
         <Route path="*" element={
           <div className="min-h-screen flex items-center justify-center">
             <div className="text-center">
