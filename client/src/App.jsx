@@ -1,23 +1,48 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import Navbar from './components/Navbar';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
-function ComingSoon({ page }) {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="text-center">
-        <div className="text-4xl font-bold text-primary-600 mb-2">Syncly</div>
-        <p className="text-gray-500 mt-2">{page} — coming soon</p>
+function AppRoutes() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-400">Loading...</p>
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <>
+      <Navbar />
+      <Routes>
+        <Route path="/login"    element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/" element={
+          user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
+        } />
+        <Route path="*" element={
+          <div className="min-h-screen flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-4xl font-bold text-primary-600 mb-2">404</div>
+              <p className="text-gray-500">Page not found</p>
+            </div>
+          </div>
+        } />
+      </Routes>
+    </>
   );
 }
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/"  element={<ComingSoon page="Home" />} />
-        <Route path="*"  element={<ComingSoon page="404"  />} />
-      </Routes>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
     </BrowserRouter>
   );
 }
