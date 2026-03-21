@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import StatsCard from '../components/StatsCard';
 
 export default function EmployerDashboard() {
   const { user } = useAuth();
@@ -170,6 +171,22 @@ export default function EmployerDashboard() {
             </form>
           </div>
         )}
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+          <StatsCard label="Total Jobs Posted" value={jobs.length} />
+          <StatsCard
+            label="Total Applicants"
+            value={jobs.reduce((acc, j) => acc + (j.applicant_count || 0), 0)}
+            color="text-green-600"
+          />
+          <StatsCard
+            label="Active Listings"
+            value={jobs.length}
+            color="text-blue-600"
+            subtitle="All your current postings"
+          />
+        </div>
 
         {/* Jobs list */}
         {loading && <p className="text-gray-400 text-center py-12">Loading...</p>}
