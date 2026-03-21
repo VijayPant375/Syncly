@@ -7,6 +7,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Jobs from './pages/Jobs';
 import JobDetail from './pages/JobDetail';
+import SeekerDashboard from './pages/SeekerDashboard';
+import EmployerDashboard from './pages/EmployerDashboard';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -28,6 +30,19 @@ function AppRoutes() {
         <Route path="/register" element={<Register />} />
         <Route path="/jobs"     element={<Jobs />} />
         <Route path="/jobs/:id" element={<JobDetail />} />
+
+        <Route path="/dashboard" element={
+          <ProtectedRoute roles={['seeker']}>
+            <SeekerDashboard />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/employer" element={
+          <ProtectedRoute roles={['employer']}>
+            <EmployerDashboard />
+          </ProtectedRoute>
+        } />
+
         <Route path="*" element={
           <div className="min-h-screen flex items-center justify-center">
             <div className="text-center">
