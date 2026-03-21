@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import ResumeUpload from '../components/ResumeUpload';
 
 const STATUS_COLORS = {
-  pending:  'bg-yellow-50 text-yellow-700',
+  pending: 'bg-yellow-50 text-yellow-700',
   reviewed: 'bg-blue-50 text-blue-700',
   accepted: 'bg-green-50 text-green-700',
   rejected: 'bg-red-50 text-red-700',
@@ -38,6 +39,9 @@ export default function SeekerDashboard() {
           <h1 className="text-2xl font-bold text-gray-900">My Applications</h1>
           <p className="text-gray-500 text-sm mt-1">Welcome back, {user?.name}</p>
         </div>
+
+        {/* Resume */}
+        <ResumeUpload />
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
