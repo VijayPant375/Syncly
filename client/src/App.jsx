@@ -10,6 +10,8 @@ import JobDetail from './pages/JobDetail';
 import SeekerDashboard from './pages/SeekerDashboard';
 import EmployerDashboard from './pages/EmployerDashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import NotFound from './pages/NotFound';
+import Footer from './components/Footer';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -26,10 +28,10 @@ function AppRoutes() {
     <>
       <Navbar />
       <Routes>
-        <Route path="/"         element={<Home />} />
-        <Route path="/login"    element={<Login />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/jobs"     element={<Jobs />} />
+        <Route path="/jobs" element={<Jobs />} />
         <Route path="/jobs/:id" element={<JobDetail />} />
 
         <Route path="/dashboard" element={
@@ -50,15 +52,9 @@ function AppRoutes() {
           </ProtectedRoute>
         } />
 
-        <Route path="*" element={
-          <div className="min-h-screen flex items-center justify-center">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary-600 mb-2">404</div>
-              <p className="text-gray-500">Page not found</p>
-            </div>
-          </div>
-        } />
+        <Route path="*" element={<NotFound />} />
       </Routes>
+      <Footer />
     </>
   );
 }
