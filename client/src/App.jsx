@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -9,6 +9,7 @@ import Jobs from './pages/Jobs';
 import JobDetail from './pages/JobDetail';
 import SeekerDashboard from './pages/SeekerDashboard';
 import EmployerDashboard from './pages/EmployerDashboard';
+import AdminDashboard from './pages/AdminDashboard';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -40,6 +41,12 @@ function AppRoutes() {
         <Route path="/employer" element={
           <ProtectedRoute roles={['employer']}>
             <EmployerDashboard />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/admin" element={
+          <ProtectedRoute roles={['admin']}>
+            <AdminDashboard />
           </ProtectedRoute>
         } />
 
