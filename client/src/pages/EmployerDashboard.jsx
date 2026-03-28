@@ -189,7 +189,11 @@ export default function EmployerDashboard() {
         </div>
 
         {/* Jobs list */}
-        {loading && <p className="text-gray-400 text-center py-12">Loading...</p>}
+        {loading && (
+          <div className="flex justify-center py-12">
+            <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
+          </div>
+        )}
         {error && <p className="text-red-500 text-center py-12">{error}</p>}
 
         {!loading && jobs.length === 0 && (
