@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import StatsCard from '../components/StatsCard';
+import ErrorMessage from '../components/ErrorMessage';
 
 export default function EmployerDashboard() {
   const { user } = useAuth();
@@ -194,7 +195,7 @@ export default function EmployerDashboard() {
             <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
           </div>
         )}
-        {error && <p className="text-red-500 text-center py-12">{error}</p>}
+        {error && <ErrorMessage message={error} />}
 
         {!loading && jobs.length === 0 && (
           <div className="card p-12 text-center">

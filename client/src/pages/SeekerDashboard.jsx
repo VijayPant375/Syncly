@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import ResumeUpload from '../components/ResumeUpload';
+import ErrorMessage from '../components/ErrorMessage';
 
 const STATUS_COLORS = {
   pending: 'bg-yellow-50 text-yellow-700',
@@ -63,7 +64,7 @@ export default function SeekerDashboard() {
         )}
 
         {error && (
-          <p className="text-red-500 text-center py-12">{error}</p>
+          <ErrorMessage message={error} />
         )}
 
         {!loading && !error && applications.length === 0 && (

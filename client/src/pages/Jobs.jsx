@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import JobCard from '../components/JobCard';
+import ErrorMessage from '../components/ErrorMessage';
 
 export default function Jobs() {
   const [jobs, setJobs] = useState([]);
@@ -97,7 +98,7 @@ export default function Jobs() {
         )}
 
         {error && (
-          <p className="text-red-500 text-center py-12">{error}</p>
+          <ErrorMessage message={error} onRetry={fetchJobs} />
         )}
 
         {!loading && !error && jobs.length === 0 && (

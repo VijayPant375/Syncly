@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import StatsCard from '../components/StatsCard';
+import ErrorMessage from '../components/ErrorMessage';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
@@ -59,11 +60,7 @@ export default function AdminDashboard() {
     </div>
   );
 
-  if (error) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <p className="text-red-500">{error}</p>
-    </div>
-  );
+  if (error) return <ErrorMessage message={error} />;
 
   return (
     <div className="min-h-screen bg-gray-50">
