@@ -3,12 +3,14 @@ import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import StatsCard from '../components/StatsCard';
 import ErrorMessage from '../components/ErrorMessage';
+import { useToast } from '../context/ToastContext';
 
 export default function EmployerDashboard() {
   const { user } = useAuth();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { showToast } = useToast();
 
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
@@ -67,8 +69,9 @@ export default function EmployerDashboard() {
         setSelectedJob(null);
         setApplicants([]);
       }
+      showToast('Job deleted successfully.', 'success');
     } catch (err) {
-      alert('Failed to delete job.');
+      showToast('Failed to delete job.', 'error');
     }
   };
 
@@ -96,8 +99,9 @@ export default function EmployerDashboard() {
       setApplicants(applicants.map(a =>
         a.id === applicationId ? { ...a, status } : a
       ));
+      showToast('Application status updated.', 'success');
     } catch (err) {
-      alert('Failed to update status.');
+      showToast('Failed to update status.', 'error');
     }
   };
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import StatsCard from '../components/StatsCard';
 import ErrorMessage from '../components/ErrorMessage';
+import { useToast } from '../context/ToastContext';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
@@ -10,6 +11,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,19 +38,20 @@ export default function AdminDashboard() {
     try {
       await api.delete(`/admin/users/${id}`);
       setUsers(users.filter(u => u.id !== id));
+      showToast('User deleted successfully.', 'success');
     } catch (err) {
-      alert(err.response?.data?.error || 'Failed to delete user.');
+      showToast(err.response?.data?.error || 'Failed to delete user.', 'error');
     }
   };
 
   const ROLE_COLORS = {
-    admin:    'bg-purple-50 text-purple-700',
+    admin: 'bg-purple-50 text-purple-700',
     employer: 'bg-blue-50 text-blue-700',
-    seeker:   'bg-green-50 text-green-700',
+    seeker: 'bg-green-50 text-green-700',
   };
 
   const STATUS_COLORS = {
-    pending:  'bg-yellow-50 text-yellow-700',
+    pending: 'bg-yellow-50 text-yellow-700',
     reviewed: 'bg-blue-50 text-blue-700',
     accepted: 'bg-green-50 text-green-700',
     rejected: 'bg-red-50 text-red-700',
@@ -75,11 +78,11 @@ export default function AdminDashboard() {
         {/* Stats */}
         {stats && (
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-            <StatsCard label="Total Users"        value={stats.totalUsers}        />
-            <StatsCard label="Job Seekers"         value={stats.totalSeekers}      color="text-green-600" />
-            <StatsCard label="Employers"           value={stats.totalEmployers}    color="text-blue-600" />
-            <StatsCard label="Jobs Posted"         value={stats.totalJobs}         color="text-purple-600" />
-            <StatsCard label="Applications"        value={stats.totalApplications} color="text-orange-600" />
+            <StatsCard label="Total Users" value={stats.totalUsers} />
+            <StatsCard label="Job Seekers" value={stats.totalSeekers} color="text-green-600" />
+            <StatsCard label="Employers" value={stats.totalEmployers} color="text-blue-600" />
+            <StatsCard label="Jobs Posted" value={stats.totalJobs} color="text-purple-600" />
+            <StatsCard label="Applications" value={stats.totalApplications} color="text-orange-600" />
           </div>
         )}
 
@@ -89,11 +92,10 @@ export default function AdminDashboard() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 text-sm font-medium capitalize transition-colors border-b-2 -mb-px ${
-                activeTab === tab
-                  ? 'border-primary-600 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+              className={`px-4 py-2 text-sm font-medium capitalize transition-colors border-b-2 -mb-px ${activeTab === tab
+                ? 'border-primary-600 text-primary-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
             >
               {tab}
             </button>
