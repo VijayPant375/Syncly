@@ -66,13 +66,13 @@ export default function AdminDashboard() {
   if (error) return <ErrorMessage message={error} />;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-6xl mx-auto px-4 py-8">
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-500 text-sm mt-1">Platform overview and management</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Platform overview and management</p>
         </div>
 
         {/* Stats */}
@@ -94,7 +94,7 @@ export default function AdminDashboard() {
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-2 text-sm font-medium capitalize transition-colors border-b-2 -mb-px ${activeTab === tab
                 ? 'border-primary-600 text-primary-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
                 }`}
             >
               {tab}
@@ -106,12 +106,12 @@ export default function AdminDashboard() {
         {activeTab === 'overview' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="card p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Users</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Users</h2>
               <div className="space-y-3">
                 {users.slice(0, 5).map((user) => (
                   <div key={user.id} className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{user.name}</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</p>
                       <p className="text-xs text-gray-400">{user.email}</p>
                     </div>
                     <span className={`text-xs font-medium px-2 py-1 rounded-full capitalize ${ROLE_COLORS[user.role]}`}>
@@ -122,12 +122,12 @@ export default function AdminDashboard() {
               </div>
             </div>
             <div className="card p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Applications</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Applications</h2>
               <div className="space-y-3">
                 {applications.slice(0, 5).map((app) => (
                   <div key={app.id} className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{app.job_title}</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">{app.job_title}</p>
                       <p className="text-xs text-gray-400">{app.seeker_name}</p>
                     </div>
                     <span className={`text-xs font-medium px-2 py-1 rounded-full capitalize ${STATUS_COLORS[app.status]}`}>
@@ -144,20 +144,20 @@ export default function AdminDashboard() {
         {activeTab === 'users' && (
           <div className="card overflow-hidden">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200">
                 <tr>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Name</th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Email</th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Role</th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Joined</th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Action</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Name</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Email</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Role</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Joined</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {users.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 font-medium text-gray-900">{user.name}</td>
-                    <td className="px-6 py-4 text-gray-500">{user.email}</td>
+                  <tr key={user.id} className="hover:bg-gray-50 dark:bg-gray-900">
+                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{user.name}</td>
+                    <td className="px-6 py-4 text-gray-500 dark:text-gray-400">{user.email}</td>
                     <td className="px-6 py-4">
                       <span className={`text-xs font-medium px-2 py-1 rounded-full capitalize ${ROLE_COLORS[user.role]}`}>
                         {user.role}
@@ -185,21 +185,21 @@ export default function AdminDashboard() {
         {activeTab === 'applications' && (
           <div className="card overflow-hidden">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200">
                 <tr>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Job</th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Company</th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Applicant</th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Date</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Job</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Company</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Applicant</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Date</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {applications.map((app) => (
-                  <tr key={app.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 font-medium text-gray-900">{app.job_title}</td>
-                    <td className="px-6 py-4 text-gray-500">{app.company}</td>
-                    <td className="px-6 py-4 text-gray-500">{app.seeker_name}</td>
+                  <tr key={app.id} className="hover:bg-gray-50 dark:bg-gray-900">
+                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{app.job_title}</td>
+                    <td className="px-6 py-4 text-gray-500 dark:text-gray-400">{app.company}</td>
+                    <td className="px-6 py-4 text-gray-500 dark:text-gray-400">{app.seeker_name}</td>
                     <td className="px-6 py-4">
                       <span className={`text-xs font-medium px-2 py-1 rounded-full capitalize ${STATUS_COLORS[app.status]}`}>
                         {app.status}

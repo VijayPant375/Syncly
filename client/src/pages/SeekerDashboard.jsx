@@ -32,13 +32,13 @@ export default function SeekerDashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-5xl mx-auto px-4 py-8">
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">My Applications</h1>
-          <p className="text-gray-500 text-sm mt-1">Welcome back, {user?.name}</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">My Applications</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Welcome back, {user?.name}</p>
         </div>
 
         {/* Resume */}
@@ -48,10 +48,10 @@ export default function SeekerDashboard() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {['pending', 'reviewed', 'accepted', 'rejected'].map((status) => (
             <div key={status} className="card p-4 text-center">
-              <div className="text-2xl font-bold text-gray-900">
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">
                 {applications.filter(a => a.status === status).length}
               </div>
-              <div className="text-xs text-gray-500 capitalize mt-1">{status}</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 capitalize mt-1">{status}</div>
             </div>
           ))}
         </div>
@@ -80,17 +80,17 @@ export default function SeekerDashboard() {
               <div key={app.id} className="card p-6">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h2 className="text-lg font-semibold text-gray-900 mb-1">
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                       {app.title}
                     </h2>
-                    <p className="text-gray-600 text-sm mb-1">
+                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">
                       {app.company} · {app.location}
                     </p>
                     <p className="text-gray-400 text-xs">
                       Applied {new Date(app.created_at).toLocaleDateString()}
                     </p>
                     {app.cover_letter && (
-                      <p className="text-gray-500 text-sm mt-3 line-clamp-2">
+                      <p className="text-gray-500 dark:text-gray-400 text-sm mt-3 line-clamp-2">
                         {app.cover_letter}
                       </p>
                     )}

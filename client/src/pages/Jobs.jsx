@@ -47,12 +47,12 @@ export default function Jobs() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
 
       {/* Search bar */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-4 py-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Browse Jobs</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Browse Jobs</h1>
           <form onSubmit={handleSearch} className="flex flex-wrap gap-3">
             <input
               type="text"
@@ -107,7 +107,7 @@ export default function Jobs() {
 
         {!loading && !error && jobs.length > 0 && (
           <>
-            <p className="text-sm text-gray-500 mb-4">{jobs.length} job{jobs.length !== 1 ? 's' : ''} found</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{jobs.length} job{jobs.length !== 1 ? 's' : ''} found</p>
             <div className="space-y-4">
               {jobs.map((job) => (
                 <JobCard key={job.id} job={job} />

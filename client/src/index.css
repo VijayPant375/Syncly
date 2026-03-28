@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-900 font-sans;
+    @apply bg-gray-50 text-gray-900 font-sans transition-colors duration-300;
   }
 }
 
@@ -20,10 +20,39 @@
   }
   .input-field {
     @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-sm
+           bg-white text-gray-900
            focus:outline-none focus:ring-2 focus:ring-primary-500
            focus:border-transparent placeholder-gray-400;
   }
   .card {
     @apply bg-white rounded-xl border border-gray-200 shadow-sm;
   }
+}
+
+/* Dark mode overrides */
+html.dark body {
+  background-color: #111827 !important;
+  color: #f3f4f6 !important;
+}
+
+html.dark .card {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+html.dark .input-field {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+  color: #f3f4f6 !important;
+}
+
+html.dark .btn-secondary {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+  color: #e5e7eb !important;
+}
+
+html.dark nav {
+  background-color: #111827 !important;
+  border-color: #374151 !important;
 }

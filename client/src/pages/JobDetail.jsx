@@ -64,13 +64,13 @@ export default function JobDetail() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-4xl mx-auto px-4 py-8">
 
         {/* Back */}
         <button
           onClick={() => navigate('/jobs')}
-          className="text-sm text-gray-500 hover:text-primary-600 mb-6 flex items-center gap-1"
+          className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 mb-6 flex items-center gap-1"
         >
           ← Back to jobs
         </button>
@@ -79,8 +79,8 @@ export default function JobDetail() {
         <div className="card p-8">
           <div className="flex items-start justify-between mb-6">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-1">{job.title}</h1>
-              <p className="text-gray-600">{job.company} · {job.location}</p>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{job.title}</h1>
+              <p className="text-gray-600 dark:text-gray-400">{job.company} · {job.location}</p>
             </div>
             <span className="bg-primary-50 text-primary-700 text-sm font-medium px-3 py-1 rounded-full">
               {job.type}
@@ -89,14 +89,14 @@ export default function JobDetail() {
 
           {job.salary && (
             <div className="mb-6">
-              <span className="text-sm font-medium text-gray-700">Salary: </span>
-              <span className="text-sm text-gray-600">{job.salary}</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Salary: </span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">{job.salary}</span>
             </div>
           )}
 
           <div className="mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">Job Description</h2>
-            <p className="text-gray-600 leading-relaxed whitespace-pre-line">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Job Description</h2>
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-line">
               {job.description}
             </p>
           </div>
@@ -137,7 +137,7 @@ export default function JobDetail() {
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
           <div className="card p-6 w-full max-w-lg">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
               Apply for {job.title}
             </h2>
 
@@ -149,7 +149,7 @@ export default function JobDetail() {
 
             <form onSubmit={handleApply}>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Cover Letter <span className="text-gray-400 font-normal">(optional)</span>
                 </label>
                 <textarea

@@ -106,14 +106,14 @@ export default function EmployerDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-5xl mx-auto px-4 py-8">
 
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Employer Dashboard</h1>
-            <p className="text-gray-500 text-sm mt-1">Welcome back, {user?.name}</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Employer Dashboard</h1>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Welcome back, {user?.name}</p>
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
@@ -126,7 +126,7 @@ export default function EmployerDashboard() {
         {/* Post Job Form */}
         {showForm && (
           <div className="card p-6 mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Post a New Job</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Post a New Job</h2>
             {formError && (
               <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-4">
                 {formError}
@@ -135,22 +135,22 @@ export default function EmployerDashboard() {
             <form onSubmit={handlePostJob} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Job Title</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Job Title</label>
                   <input name="title" value={form.title} onChange={handleChange}
                     className="input-field" placeholder="e.g. Frontend Developer" required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Company</label>
                   <input name="company" value={form.company} onChange={handleChange}
                     className="input-field" placeholder="e.g. Tech Corp" required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Location</label>
                   <input name="location" value={form.location} onChange={handleChange}
                     className="input-field" placeholder="e.g. Remote" required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Job Type</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Job Type</label>
                   <select name="type" value={form.type} onChange={handleChange} className="input-field">
                     <option value="full-time">Full-time</option>
                     <option value="part-time">Part-time</option>
@@ -159,13 +159,13 @@ export default function EmployerDashboard() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Salary (optional)</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Salary (optional)</label>
                   <input name="salary" value={form.salary} onChange={handleChange}
                     className="input-field" placeholder="e.g. $80,000 - $100,000" />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
                 <textarea name="description" value={form.description} onChange={handleChange}
                   className="input-field h-32 resize-none"
                   placeholder="Describe the role, requirements and responsibilities..." required />
@@ -209,13 +209,13 @@ export default function EmployerDashboard() {
 
         {!loading && jobs.length > 0 && (
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900">Your Job Postings ({jobs.length})</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Your Job Postings ({jobs.length})</h2>
             {jobs.map((job) => (
               <div key={job.id} className="card p-6">
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <h3 className="font-semibold text-gray-900">{job.title}</h3>
-                    <p className="text-sm text-gray-500">{job.location} · {job.type}</p>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">{job.title}</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{job.location} · {job.type}</p>
                   </div>
                   <div className="flex gap-2">
                     <button
@@ -245,10 +245,10 @@ export default function EmployerDashboard() {
                     {!loadingApplicants && applicants.length > 0 && (
                       <div className="space-y-3">
                         {applicants.map((app) => (
-                          <div key={app.id} className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                          <div key={app.id} className="flex items-center justify-between bg-gray-50 dark:bg-gray-900 rounded-lg p-3">
                             <div>
-                              <p className="text-sm font-medium text-gray-900">{app.seeker_name}</p>
-                              <p className="text-xs text-gray-500">{app.seeker_email}</p>
+                              <p className="text-sm font-medium text-gray-900 dark:text-white">{app.seeker_name}</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">{app.seeker_email}</p>
                               {app.cover_letter && (
                                 <p className="text-xs text-gray-400 mt-1 line-clamp-1">{app.cover_letter}</p>
                               )}

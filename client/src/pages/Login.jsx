@@ -33,13 +33,13 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
       <div className="card p-8 w-full max-w-md">
         
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
-          <p className="text-gray-500 text-sm mt-1">Sign in to your Syncly account</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Welcome back</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Sign in to your Syncly account</p>
         </div>
 
         {/* Error */}
@@ -52,7 +52,7 @@ export default function Login() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Email
             </label>
             <input
@@ -67,7 +67,7 @@ export default function Login() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Password
             </label>
             <input
@@ -91,7 +91,7 @@ export default function Login() {
         </form>
 
         {/* Footer */}
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
           Don't have an account?{' '}
           <Link to="/register" className="text-primary-600 font-medium hover:underline">
             Sign up
@@ -99,11 +99,11 @@ export default function Login() {
         </p>
 
         {/* Demo accounts */}
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <p className="text-xs font-medium text-gray-500 mb-2">Demo accounts</p>
-          <p className="text-xs text-gray-500">seeker@syncly.com / password123</p>
-          <p className="text-xs text-gray-500">employer@syncly.com / password123</p>
-          <p className="text-xs text-gray-500">admin@syncly.com / password123</p>
+        <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200">
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Demo accounts</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">seeker@syncly.com / password123</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">employer@syncly.com / password123</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">admin@syncly.com / password123</p>
         </div>
       </div>
     </div>

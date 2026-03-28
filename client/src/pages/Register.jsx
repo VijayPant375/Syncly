@@ -37,13 +37,13 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
       <div className="card p-8 w-full max-w-md">
 
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Create an account</h1>
-          <p className="text-gray-500 text-sm mt-1">Join Syncly and find your next opportunity</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Create an account</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Join Syncly and find your next opportunity</p>
         </div>
 
         {/* Error */}
@@ -56,7 +56,7 @@ export default function Register() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Full Name
             </label>
             <input
@@ -71,7 +71,7 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Email
             </label>
             <input
@@ -86,7 +86,7 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Password
             </label>
             <input
@@ -102,7 +102,7 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               I am a...
             </label>
             <select
@@ -126,7 +126,7 @@ export default function Register() {
         </form>
 
         {/* Footer */}
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
           Already have an account?{' '}
           <Link to="/login" className="text-primary-600 font-medium hover:underline">
             Sign in
