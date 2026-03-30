@@ -5,10 +5,10 @@ import ResumeUpload from '../components/ResumeUpload';
 import ErrorMessage from '../components/ErrorMessage';
 
 const STATUS_COLORS = {
-  pending: 'bg-yellow-50 text-yellow-700',
-  reviewed: 'bg-blue-50 text-blue-700',
-  accepted: 'bg-green-50 text-green-700',
-  rejected: 'bg-red-50 text-red-700',
+  pending: 'bg-yellow-50 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300',
+  reviewed: 'bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300',
+  accepted: 'bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-300',
+  rejected: 'bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-300',
 };
 
 export default function SeekerDashboard() {
