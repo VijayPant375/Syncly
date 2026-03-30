@@ -62,7 +62,7 @@ export default function ResumeUpload() {
 
   return (
     <div className="card p-6 mb-8">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">My Resume</h2>
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">My Resume</h2>
 
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-4">
@@ -77,9 +77,9 @@ export default function ResumeUpload() {
       )}
 
       {resume ? (
-        <div className="flex items-center justify-between bg-gray-50 rounded-lg p-4">
+        <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
           <div>
-            <p className="text-sm font-medium text-gray-900">{resume.filename}</p>
+            <p className="text-sm font-medium text-gray-900 dark:text-white">{resume.filename}</p>
             <p className="text-xs text-gray-400 mt-1">
               Uploaded {new Date(resume.uploaded_at).toLocaleDateString()}
             </p>
@@ -95,7 +95,7 @@ export default function ResumeUpload() {
           </div>
         </div>
       ) : (
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+        <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center">
           <p className="text-gray-400 text-sm mb-3">No resume uploaded yet</p>
           <label className="btn-primary text-sm cursor-pointer">
             {uploading ? 'Uploading...' : 'Upload Resume'}
