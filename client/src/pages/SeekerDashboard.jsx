@@ -3,6 +3,7 @@ import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import ResumeUpload from '../components/ResumeUpload';
 import ErrorMessage from '../components/ErrorMessage';
+import { SkeletonDashboard } from '../components/Skeleton';
 
 const STATUS_COLORS = {
   pending: 'bg-yellow-50 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300',
@@ -57,11 +58,7 @@ export default function SeekerDashboard() {
         </div>
 
         {/* Applications list */}
-        {loading && (
-          <div className="flex justify-center py-12">
-            <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
-          </div>
-        )}
+        {loading && <SkeletonDashboard />}
 
         {error && (
           <ErrorMessage message={error} />

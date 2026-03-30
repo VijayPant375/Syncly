@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import JobCard from '../components/JobCard';
 import ErrorMessage from '../components/ErrorMessage';
+import { SkeletonCard } from '../components/Skeleton';
 
 export default function Jobs() {
   const [jobs, setJobs] = useState([]);
@@ -92,10 +93,12 @@ export default function Jobs() {
       {/* Results */}
       <div className="max-w-6xl mx-auto px-4 py-8">
         {loading && (
-          <div className="flex justify-center py-12">
-            <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
-          </div>
-        )}
+  <div className="space-y-4">
+    {[...Array(5)].map((_, i) => (
+      <SkeletonCard key={i} />
+    ))}
+  </div>
+)}
 
         {error && (
           <ErrorMessage message={error} onRetry={fetchJobs} />

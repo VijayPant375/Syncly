@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import StatsCard from '../components/StatsCard';
 import ErrorMessage from '../components/ErrorMessage';
 import { useToast } from '../context/ToastContext';
+import { SkeletonDashboard } from '../components/Skeleton';
 
 export default function EmployerDashboard() {
   const { user } = useAuth();
@@ -194,11 +195,7 @@ export default function EmployerDashboard() {
         </div>
 
         {/* Jobs list */}
-        {loading && (
-          <div className="flex justify-center py-12">
-            <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
-          </div>
-        )}
+        {loading && <SkeletonDashboard />}
         {error && <ErrorMessage message={error} />}
 
         {!loading && jobs.length === 0 && (
