@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 export default function JobDetail() {
   const { id } = useParams();
@@ -17,6 +18,7 @@ export default function JobDetail() {
   const [applying, setApplying] = useState(false);
   const [applyError, setApplyError] = useState('');
   const [applySuccess, setApplySuccess] = useState(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -31,6 +33,16 @@ export default function JobDetail() {
     };
     fetchJob();
   }, [id]);
+  
+  const [hasResume, setHasResume] = useState(false);
+
+useEffect(() => {
+  if (user?.role === 'seeker') {
+    api.get('/resume')
+      .then(res => setHasResume(!!res.data))
+      .catch(() => setHasResume(false));
+  }
+}, [user]);
 
   const handleApply = async (e) => {
     e.preventDefault();
@@ -112,12 +124,26 @@ export default function JobDetail() {
             )}
 
             {user?.role === 'seeker' && !applySuccess && (
-              <button
-                onClick={() => setShowModal(true)}
-                className="btn-primary"
-              >
-                Apply Now
-              </button>
+              <div className="space-y-2">
+                <button
+                  onClick={() => {
+                    if (!hasResume) {
+                      showToast('Please upload a resume before applying.', 'error');
+                      return;
+                    }
+                    setShowModal(true);
+                  }}
+                  className="btn-primary"
+                >
+                  Apply Now
+                </button>
+                {!hasResume && (
+                  <p className="text-xs text-red-500 dark:text-red-400">
+                    You need to upload a resume before applying.{' '}
+                    <a href="/dashboard" className="underline">Go to dashboard</a>
+                  </p>
+                )}
+              </div>
             )}
 
             {applySuccess && (
