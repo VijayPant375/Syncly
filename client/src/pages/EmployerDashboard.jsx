@@ -235,7 +235,7 @@ export default function EmployerDashboard() {
 
                 {/* Applicants */}
                 {selectedJob === job.id && (
-                  <div className="border-t border-gray-200 pt-4 mt-2">
+                  <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-2">
                     {loadingApplicants && (
                       <p className="text-gray-400 text-sm">Loading applicants...</p>
                     )}

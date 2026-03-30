@@ -99,7 +99,7 @@ export default function Login() {
         </p>
 
         {/* Demo accounts */}
-        <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200">
+        <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Demo accounts</p>
           <p className="text-xs text-gray-500 dark:text-gray-400">seeker@syncly.com / password123</p>
           <p className="text-xs text-gray-500 dark:text-gray-400">employer@syncly.com / password123</p>

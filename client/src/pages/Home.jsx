@@ -8,7 +8,7 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
 
       {/* Hero */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-6xl mx-auto px-4 py-20 text-center">
           <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Find your next <span className="text-primary-600">opportunity</span>
@@ -49,7 +49,7 @@ export default function Home() {
       </div>
 
       {/* How it works */}
-      <div className="bg-white border-t border-gray-200">
+      <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
         <div className="max-w-6xl mx-auto px-4 py-16">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-12">
             How it works
