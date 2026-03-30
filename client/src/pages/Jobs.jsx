@@ -4,6 +4,7 @@ import api from '../api/axios';
 import JobCard from '../components/JobCard';
 import ErrorMessage from '../components/ErrorMessage';
 import { SkeletonCard } from '../components/Skeleton';
+import EmptyState from '../components/EmptyState';
 
 export default function Jobs() {
   const [jobs, setJobs] = useState([]);
@@ -93,19 +94,24 @@ export default function Jobs() {
       {/* Results */}
       <div className="max-w-6xl mx-auto px-4 py-8">
         {loading && (
-  <div className="space-y-4">
-    {[...Array(5)].map((_, i) => (
-      <SkeletonCard key={i} />
-    ))}
-  </div>
-)}
+          <div className="space-y-4">
+            {[...Array(5)].map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
+        )}
 
         {error && (
           <ErrorMessage message={error} onRetry={fetchJobs} />
         )}
 
         {!loading && !error && jobs.length === 0 && (
-          <p className="text-gray-400 text-center py-12">No jobs found.</p>
+          <EmptyState
+            icon="🔍"
+            title="No jobs found"
+            message="Try adjusting your search filters or check back later for new opportunities."
+            action={{ href: '/jobs', label: 'Clear Search' }}
+          />
         )}
 
         {!loading && !error && jobs.length > 0 && (

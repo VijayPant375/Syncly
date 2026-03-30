@@ -5,6 +5,7 @@ import StatsCard from '../components/StatsCard';
 import ErrorMessage from '../components/ErrorMessage';
 import { useToast } from '../context/ToastContext';
 import { SkeletonDashboard } from '../components/Skeleton';
+import EmptyState from '../components/EmptyState';
 
 export default function EmployerDashboard() {
   const { user } = useAuth();
@@ -199,9 +200,11 @@ export default function EmployerDashboard() {
         {error && <ErrorMessage message={error} />}
 
         {!loading && jobs.length === 0 && (
-          <div className="card p-12 text-center">
-            <p className="text-gray-400 mb-4">You haven't posted any jobs yet.</p>
-          </div>
+          <EmptyState
+            icon="💼"
+            title="No jobs posted yet"
+            message="You haven't posted any jobs yet. Create your first job listing to start receiving applications."
+          />
         )}
 
         {!loading && jobs.length > 0 && (

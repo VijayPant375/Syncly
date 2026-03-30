@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import ResumeUpload from '../components/ResumeUpload';
 import ErrorMessage from '../components/ErrorMessage';
 import { SkeletonDashboard } from '../components/Skeleton';
+import EmptyState from '../components/EmptyState';
 
 const STATUS_COLORS = {
   pending: 'bg-yellow-50 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300',
@@ -65,10 +66,12 @@ export default function SeekerDashboard() {
         )}
 
         {!loading && !error && applications.length === 0 && (
-          <div className="card p-12 text-center">
-            <p className="text-gray-400 mb-4">You haven't applied to any jobs yet.</p>
-            <a href="/jobs" className="btn-primary">Browse Jobs</a>
-          </div>
+          <EmptyState
+            icon="📋"
+            title="No applications yet"
+            message="You haven't applied to any jobs yet. Start browsing and apply to your dream job!"
+            action={{ href: '/jobs', label: 'Browse Jobs' }}
+          />
         )}
 
         {!loading && !error && applications.length > 0 && (
