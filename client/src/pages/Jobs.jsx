@@ -5,6 +5,7 @@ import JobCard from '../components/JobCard';
 import ErrorMessage from '../components/ErrorMessage';
 import { SkeletonCard } from '../components/Skeleton';
 import EmptyState from '../components/EmptyState';
+import { useAuth } from '../context/AuthContext';
 
 export default function Jobs() {
   const [jobs, setJobs] = useState([]);
@@ -14,6 +15,8 @@ export default function Jobs() {
   const [search, setSearch] = useState('');
   const [location, setLocation] = useState('');
   const [type, setType] = useState('');
+  const [savedJobIds, setSavedJobIds] = useState([]);
+  const { user } = useAuth();
 
   const fetchJobs = async () => {
     setLoading(true);
@@ -47,6 +50,14 @@ export default function Jobs() {
     setType('');
     setTimeout(fetchJobs, 0);
   };
+
+  useEffect(() => {
+    if (user?.role === 'seeker') {
+      api.get('/jobs/saved/list')
+        .then(res => setSavedJobIds(res.data.jobs.map(j => j.id)))
+        .catch(() => { });
+    }
+  }, [user]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -119,7 +130,7 @@ export default function Jobs() {
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{jobs.length} job{jobs.length !== 1 ? 's' : ''} found</p>
             <div className="space-y-4">
               {jobs.map((job) => (
-                <JobCard key={job.id} job={job} />
+                <JobCard key={job.id} job={job} saved={savedJobIds.includes(job.id)} />
               ))}
             </div>
           </>

@@ -7,12 +7,22 @@ const {
   updateJob,
   deleteJob,
 } = require('../controllers/jobsController');
+const {
+  saveJob,
+  unsaveJob,
+  getSavedJobs,
+} = require('../controllers/savedJobsController');
 const { authenticate, authorize } = require('../middleware/auth');
 const { validateJob } = require('../middleware/jobValidation');
 const validate = require('../middleware/validate');
 
 // GET /api/jobs — public
 router.get('/', getAllJobs);
+
+// Saved jobs — must be before /:id to avoid conflict
+router.get('/saved/list', authenticate, authorize('seeker'), getSavedJobs);
+router.post('/:id/save', authenticate, authorize('seeker'), saveJob);
+router.delete('/:id/save', authenticate, authorize('seeker'), unsaveJob);
 
 // GET /api/jobs/:id — public
 router.get('/:id', getJobById);
