@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function Footer() {
+  const { logout } = useAuth();
   return (
     <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 mt-auto">
       <div className="max-w-6xl mx-auto px-4 py-8">
@@ -24,7 +26,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/register" className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 transition-colors">
+                <Link to="/register" onClick={logout} className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 transition-colors">
                   Create Account
                 </Link>
               </li>
