@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import JobCard from '../components/JobCard';
 import ErrorMessage from '../components/ErrorMessage';
@@ -11,7 +10,6 @@ export default function Jobs() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
   const [search, setSearch] = useState('');
   const [location, setLocation] = useState('');
   const [type, setType] = useState('');
@@ -26,8 +24,13 @@ export default function Jobs() {
       if (location) params.location = location;
       if (type) params.type = type;
 
-      const res = await api.get('/jobs', { params });
-      setJobs(res.data.jobs);
+      const [jobsRes, savedRes] = await Promise.all([
+        api.get('/jobs', { params }),
+        user?.role === 'seeker' ? api.get('/jobs/saved/list') : Promise.resolve({ data: { jobs: [] } })
+      ]);
+
+      setJobs(jobsRes.data.jobs);
+      setSavedJobIds(savedRes.data.jobs.map(j => j.id));
     } catch (err) {
       setError('Failed to load jobs.');
     } finally {
@@ -37,7 +40,7 @@ export default function Jobs() {
 
   useEffect(() => {
     fetchJobs();
-  }, []);
+  }, [user]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -50,14 +53,6 @@ export default function Jobs() {
     setType('');
     setTimeout(fetchJobs, 0);
   };
-
-  useEffect(() => {
-    if (user?.role === 'seeker') {
-      api.get('/jobs/saved/list')
-        .then(res => setSavedJobIds(res.data.jobs.map(j => j.id)))
-        .catch(() => { });
-    }
-  }, [user]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -92,12 +87,8 @@ export default function Jobs() {
               <option value="contract">Contract</option>
               <option value="internship">Internship</option>
             </select>
-            <button type="submit" className="btn-primary">
-              Search
-            </button>
-            <button type="button" onClick={handleClear} className="btn-secondary">
-              Clear
-            </button>
+            <button type="submit" className="btn-primary">Search</button>
+            <button type="button" onClick={handleClear} className="btn-secondary">Clear</button>
           </form>
         </div>
       </div>
@@ -112,9 +103,7 @@ export default function Jobs() {
           </div>
         )}
 
-        {error && (
-          <ErrorMessage message={error} onRetry={fetchJobs} />
-        )}
+        {error && <ErrorMessage message={error} onRetry={fetchJobs} />}
 
         {!loading && !error && jobs.length === 0 && (
           <EmptyState
@@ -127,7 +116,9 @@ export default function Jobs() {
 
         {!loading && !error && jobs.length > 0 && (
           <>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{jobs.length} job{jobs.length !== 1 ? 's' : ''} found</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              {jobs.length} job{jobs.length !== 1 ? 's' : ''} found
+            </p>
             <div className="space-y-4">
               {jobs.map((job) => (
                 <JobCard key={job.id} job={job} saved={savedJobIds.includes(job.id)} />

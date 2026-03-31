@@ -12,6 +12,7 @@ import EmployerDashboard from './pages/EmployerDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import NotFound from './pages/NotFound';
 import Footer from './components/Footer';
+import ATSChecker from './pages/ATSChecker';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -37,6 +38,12 @@ function AppRoutes() {
         <Route path="/dashboard" element={
           <ProtectedRoute roles={['seeker']}>
             <SeekerDashboard />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/ats-checker" element={
+          <ProtectedRoute roles={['seeker']}>
+            <ATSChecker />
           </ProtectedRoute>
         } />
 

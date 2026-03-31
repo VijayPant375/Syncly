@@ -15,7 +15,7 @@ export default function Navbar() {
   return (
     <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        
+
         {/* Logo */}
         <Link to="/" className="text-2xl font-bold text-primary-600">
           Syncly
@@ -42,9 +42,14 @@ export default function Navbar() {
           ) : (
             <>
               {user.role === 'seeker' && (
-                <Link to="/dashboard" className="text-sm text-gray-600 dark:text-gray-300 hover:text-primary-600 transition-colors">
-                  My Applications
-                </Link>
+                <>
+                  <Link to="/dashboard" className="text-sm text-gray-600 dark:text-gray-300 hover:text-primary-600 transition-colors">
+                    My Applications
+                  </Link>
+                  <Link to="/ats-checker" className="text-sm text-gray-600 dark:text-gray-300 hover:text-primary-600 transition-colors">
+                    ATS Checker
+                  </Link>
+                </>
               )}
               {user.role === 'employer' && (
                 <Link to="/employer" className="text-sm text-gray-600 dark:text-gray-300 hover:text-primary-600 transition-colors">
