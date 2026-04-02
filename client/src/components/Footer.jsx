@@ -30,11 +30,9 @@ export default function Footer() {
                   Create Account
                 </Link>
               </li>
-              <li>
-                <Link to="/login" className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 transition-colors">
-                  Sign In
-                </Link>
-              </li>
+              <Link to="/login" onClick={logout} className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 transition-colors">
+                Sign In
+              </Link>
             </ul>
           </div>
 

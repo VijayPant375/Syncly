@@ -13,6 +13,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import NotFound from './pages/NotFound';
 import Footer from './components/Footer';
 import ATSChecker from './pages/ATSChecker';
+import Profile from './pages/Profile';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -44,6 +45,12 @@ function AppRoutes() {
         <Route path="/ats-checker" element={
           <ProtectedRoute roles={['seeker']}>
             <ATSChecker />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/profile" element={
+          <ProtectedRoute roles={['seeker', 'employer']}>
+            <Profile />
           </ProtectedRoute>
         } />
 

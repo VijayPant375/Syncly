@@ -62,7 +62,9 @@ export default function Navbar() {
                 </Link>
               )}
               <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-500 dark:text-gray-400">Hi, {user.name}</span>
+                <Link to="/profile" className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 transition-colors">
+                  Hi, {user.name}
+                </Link>
                 <button onClick={handleLogout} className="btn-secondary text-sm">
                   Logout
                 </button>
