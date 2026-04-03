@@ -2,72 +2,104 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function Footer() {
-  const { logout } = useAuth();
-
+  const { user, logout } = useAuth();
   return (
-    <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 mt-auto">
-      <div className="max-w-6xl mx-auto px-4 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+    <footer className="bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800/60 mt-auto">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
 
           {/* Brand */}
-          <div>
-            <div className="text-2xl font-bold text-primary-600 mb-3">Syncly</div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-              Your next opportunity is one click away. Syncly bridges the gap between talented professionals and the companies that need them.
+          <div className="md:col-span-2">
+            <Link to="/" className="inline-flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-600 to-accent-500 flex items-center justify-center shadow-md">
+                <span className="text-white font-black text-sm">S</span>
+              </div>
+              <span className="text-xl font-black gradient-text">Syncly</span>
+            </Link>
+            <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed max-w-xs">
+              Your next great opportunity is one click away. Syncly bridges talented professionals with world-class companies.
             </p>
-            <div className="flex gap-3 mt-4">
-              <span className="text-xs bg-primary-50 dark:bg-primary-900 text-primary-700 dark:text-primary-300 px-2 py-1 rounded-full">🚀 11+ Jobs</span>
-              <span className="text-xs bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-300 px-2 py-1 rounded-full">✅ Free to Use</span>
-              <span className="text-xs bg-purple-50 dark:bg-purple-900 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-full">🤖 AI Powered</span>
+            <div className="flex flex-wrap gap-2 mt-5">
+              <span className="badge badge-primary">🚀 AI Powered</span>
+              <span className="badge badge-green">✅ Free to Use</span>
+              <span className="badge badge-purple">🔒 Secure</span>
             </div>
           </div>
 
-          {/* Platform Links */}
+          {/* Platform */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 uppercase tracking-wider">Platform</h3>
-            <ul className="space-y-2.5">
+            <h3 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">Platform</h3>
+            <ul className="space-y-3">
               <li>
-                <Link to="/jobs" className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 transition-colors flex items-center gap-2">
-                  🔍 Browse Jobs
+                <Link to="/jobs" className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium">
+                  Browse Jobs
                 </Link>
               </li>
-              <li>
-                <Link to="/register" onClick={logout} className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 transition-colors flex items-center gap-2">
-                  ✨ Create Account
-                </Link>
-              </li>
-              <li>
-                <Link to="/login" onClick={logout} className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 transition-colors flex items-center gap-2">
-                  🔐 Sign In
-                </Link>
-              </li>
+              {!user && (
+                <>
+                  <li>
+                    <Link to="/register" className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium">
+                      Create Account
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/login" className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium">
+                      Sign In
+                    </Link>
+                  </li>
+                </>
+              )}
+              {user?.role === 'seeker' && (
+                <>
+                  <li>
+                    <Link to="/dashboard" className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium">
+                      My Applications
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/ats-checker" className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium">
+                      ATS Checker
+                    </Link>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
 
           {/* Employers */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 uppercase tracking-wider">Employers</h3>
-            <ul className="space-y-2.5">
-              <li>
-                <Link to="/register" className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 transition-colors flex items-center gap-2">
-                  📝 Post a Job
-                </Link>
-              </li>
-              <li>
-                <Link to="/employer" className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 transition-colors flex items-center gap-2">
-                  📊 Employer Dashboard
-                </Link>
-              </li>
+            <h3 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">Employers</h3>
+            <ul className="space-y-3">
+              {!user || user?.role === 'employer' ? (
+                <>
+                  <li>
+                    <Link to={user ? "/employer" : "/register"} className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium">
+                      Post a Job
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to={user ? "/employer" : "/login"} className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium">
+                      Employer Dashboard
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                <li>
+                  <button onClick={() => { logout(); window.location.href='/register'; }} className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium text-left">
+                    Create Employer Account
+                  </button>
+                </li>
+              )}
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-gray-200 dark:border-gray-700 pt-6 flex flex-col md:flex-row items-center justify-between gap-2">
+        <div className="border-t border-gray-100 dark:border-gray-800/60 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-gray-400 dark:text-gray-500">
             © {new Date().getFullYear()} Syncly. All rights reserved.
           </p>
           <p className="text-xs text-gray-400 dark:text-gray-500">
-            Built with ❤️ using React, Node.js, PostgreSQL & Gemini AI
+            Built with React, Node.js, PostgreSQL &amp; Gemini AI
           </p>
         </div>
       </div>

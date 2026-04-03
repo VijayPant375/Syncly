@@ -1,63 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-900 font-sans;
-    transition: background-color 0.4s ease, color 0.4s ease;
+    @apply bg-slate-50 text-gray-900 font-sans antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
-}
-
-*, *::before, *::after {
-  transition: background-color 0.4s ease, border-color 0.4s ease, color 0.3s ease;
+  html.dark body {
+    @apply bg-gray-950 text-gray-100;
+  }
 }
 
 @layer components {
+
+  /* ── Buttons ─────────────────────────────────────── */
   .btn-primary {
-    @apply bg-primary-600 text-white font-medium px-4 py-2 rounded-lg
-           hover:bg-primary-700 focus:outline-none focus:ring-2
-           focus:ring-primary-500 transition-colors disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2
+           bg-primary-600 text-white font-semibold px-5 py-2.5 rounded-xl
+           hover:bg-primary-700 active:scale-95
+           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+           transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed
+           shadow-sm hover:shadow-md;
   }
   .btn-secondary {
-    @apply bg-white text-gray-700 font-medium px-4 py-2 rounded-lg
-           border border-gray-300 hover:bg-gray-50 transition-colors;
+    @apply inline-flex items-center justify-center gap-2
+           bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200
+           font-semibold px-5 py-2.5 rounded-xl
+           border border-gray-200 dark:border-gray-700
+           hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-95
+           transition-all duration-200 shadow-sm hover:shadow-md;
   }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2
+           text-gray-600 dark:text-gray-300 font-medium px-4 py-2 rounded-xl
+           hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95
+           transition-all duration-200;
+  }
+
+  /* ── Input fields ────────────────────────────────── */
   .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-sm
-           bg-white text-gray-900
-           focus:outline-none focus:ring-2 focus:ring-primary-500
-           focus:border-transparent placeholder-gray-400;
+    @apply w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl text-sm
+           bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
+           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
+           placeholder-gray-400 dark:placeholder-gray-500
+           transition-all duration-200;
   }
+
+  /* ── Cards ───────────────────────────────────────── */
   .card {
-    @apply bg-white rounded-xl border border-gray-200 shadow-sm;
+    @apply bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm;
+  }
+  .card-hover {
+    @apply card hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer;
+  }
+  .glass-card {
+    @apply rounded-2xl border border-white/20 dark:border-white/5
+           bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl shadow-xl;
+  }
+
+  /* ── Badges / Tags ───────────────────────────────── */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  .badge-primary {
+    @apply badge bg-primary-50 text-primary-700;
+  }
+  .badge-green {
+    @apply badge bg-emerald-50 text-emerald-700;
+  }
+  .badge-yellow {
+    @apply badge bg-amber-50 text-amber-700;
+  }
+  .badge-red {
+    @apply badge bg-red-50 text-red-700;
+  }
+  .badge-purple {
+    @apply badge bg-purple-50 text-purple-700;
+  }
+  .badge-orange {
+    @apply badge bg-orange-50 text-orange-700;
+  }
+  .badge-gray {
+    @apply badge bg-gray-100 text-gray-600;
+  }
+
+  /* ── Section wrappers ────────────────────────────── */
+  .page-container {
+    @apply min-h-screen bg-slate-50 dark:bg-gray-950;
+  }
+  .content-wrapper {
+    @apply max-w-6xl mx-auto px-4 sm:px-6;
+  }
+
+  /* ── Gradient text ───────────────────────────────── */
+  .gradient-text {
+    background-image: linear-gradient(to right, #4f46e5, #d946ef);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* ── Animated gradient background ───────────────── */
+  .hero-gradient {
+    background: linear-gradient(-45deg, #4f46e5, #7c3aed, #c026d3, #2563eb);
+    background-size: 300% 300%;
+    animation: gradient 8s ease infinite;
   }
 }
 
-/* Dark mode overrides */
-html.dark body {
-  background-color: #111827 !important;
-  color: #f3f4f6 !important;
+/* ── Custom scrollbar ─────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { @apply bg-transparent; }
+::-webkit-scrollbar-thumb { @apply bg-gray-300 dark:bg-gray-700 rounded-full; }
+::-webkit-scrollbar-thumb:hover { @apply bg-gray-400 dark:bg-gray-600; }
+
+/* ── Smooth global transition (only colors) ──────── */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
 }
 
-html.dark .card {
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
-}
+/* ── Dark mode overrides ─────────────────────────── */
+html.dark .card   { background-color: #111827; border-color: #1f2937; }
+html.dark .input-field { background-color: #1f2937; border-color: #374151; color: #f3f4f6; }
+html.dark .btn-secondary { background-color: #1f2937; border-color: #374151; color: #e5e7eb; }
+html.dark nav { background-color: rgba(3,7,18,0.8); border-color: #1f2937; }
 
-html.dark .input-field {
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
-  color: #f3f4f6 !important;
-}
-
-html.dark .btn-secondary {
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
-  color: #e5e7eb !important;
-}
-
-html.dark nav {
-  background-color: #111827 !important;
-  border-color: #374151 !important;
-}
+/* ── Dark mode badge overrides ───────────────────── */
+html.dark .badge-primary { background-color: rgba(79,70,229,0.2); color: #a5b4fc; }
+html.dark .badge-green   { background-color: rgba(16,185,129,0.2); color: #6ee7b7; }
+html.dark .badge-yellow  { background-color: rgba(217,119,6,0.2);  color: #fcd34d; }
+html.dark .badge-red     { background-color: rgba(239,68,68,0.2);  color: #fca5a5; }
+html.dark .badge-purple  { background-color: rgba(139,92,246,0.2); color: #c4b5fd; }
+html.dark .badge-orange  { background-color: rgba(249,115,22,0.2); color: #fdba74; }
+html.dark .badge-gray    { background-color: #1f2937; color: #d1d5db; }
