@@ -1,7 +1,7 @@
 const pool = require('../config/db');
 
 const getAllJobs = async (req, res) => {
-  const { search, location, type } = req.query;
+  const { search, location, type, min_salary, max_salary, remote } = req.query;
 
   try {
     let query = `
@@ -19,7 +19,11 @@ const getAllJobs = async (req, res) => {
       paramCount++;
     }
 
-    if (location) {
+    if (remote === 'true') {
+      query += ` AND j.location ILIKE $${paramCount}`;
+      params.push('%Remote%');
+      paramCount++;
+    } else if (location) {
       query += ` AND j.location ILIKE $${paramCount}`;
       params.push(`%${location}%`);
       paramCount++;
@@ -28,6 +32,18 @@ const getAllJobs = async (req, res) => {
     if (type) {
       query += ` AND j.type = $${paramCount}`;
       params.push(type);
+      paramCount++;
+    }
+
+    if (min_salary && String(min_salary).trim() !== '' && !isNaN(min_salary)) {
+      query += ` AND NULLIF(regexp_replace(substring(j.salary::text FROM '[0-9]+[0-9,.]*'), '[^0-9.]', '', 'g'), '')::numeric >= $${paramCount}`;
+      params.push(parseFloat(min_salary));
+      paramCount++;
+    }
+
+    if (max_salary && String(max_salary).trim() !== '' && !isNaN(max_salary)) {
+      query += ` AND NULLIF(regexp_replace(substring(j.salary::text FROM '[0-9]+[0-9,.]*'), '[^0-9.]', '', 'g'), '')::numeric <= $${paramCount}`;
+      params.push(parseFloat(max_salary));
       paramCount++;
     }
 
