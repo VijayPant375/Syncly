@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import api from '../api/axios';
 
 console.log('API Key:', import.meta.env.VITE_GEMINI_API_KEY);
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY, {
@@ -15,6 +16,30 @@ export default function ATSChecker() {
   const [resumeText, setResumeText] = useState('');
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [fetchingResume, setFetchingResume] = useState(false);
+
+  const fetchUploadedResume = async () => {
+    setFetchingResume(true);
+    try {
+      const res = await api.get('/resume/text');
+      if (res.data.text && res.data.text.trim()) {
+        setResumeText(res.data.text.trim());
+        showToast('Resume loaded successfully!', 'success');
+      } else {
+        showToast('Resume parsed, but no text was found.', 'error');
+      }
+    } catch (err) {
+      if (err.response?.status === 404) {
+        showToast(err.response?.data?.error || 'No uploaded resume found. Please upload one in your profile.', 'error');
+      } else if (err.response?.status === 400) {
+        showToast(err.response?.data?.error || 'Unsupported file type. Please upload a PDF or DOCX.', 'error');
+      } else {
+        showToast('Failed to load resume. Server error.', 'error');
+      }
+    } finally {
+      setFetchingResume(false);
+    }
+  };
 
   const handleCheck = async () => {
     if (!jobDescription.trim() || !resumeText.trim()) {
@@ -88,7 +113,16 @@ Respond in this exact JSON format with no extra text:
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           {/* Resume Input */}
           <div className="card p-6">
-            <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Your Resume</h2>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Your Resume</h2>
+              <button 
+                onClick={fetchUploadedResume} 
+                disabled={fetchingResume}
+                className="text-xs text-primary-600 dark:text-primary-400 hover:underline font-medium focus:outline-none"
+              >
+                {fetchingResume ? 'Loading...' : 'Use Uploaded Resume'}
+              </button>
+            </div>
             <textarea
               value={resumeText}
               onChange={(e) => setResumeText(e.target.value)}

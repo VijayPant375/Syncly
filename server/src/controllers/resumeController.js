@@ -1,6 +1,8 @@
 const pool = require('../config/db');
 const path = require('path');
 const fs = require('fs');
+const pdfParse = require('pdf-parse');
+const mammoth = require('mammoth');
 
 const uploadResume = async (req, res) => {
   try {
@@ -83,4 +85,41 @@ const deleteResume = async (req, res) => {
   }
 };
 
-module.exports = { uploadResume, getMyResume, deleteResume };
+const getResumeText = async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM resumes WHERE user_id = $1',
+      [req.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'No resume found.' });
+    }
+
+    const filepath = result.rows[0].filepath;
+    if (!fs.existsSync(filepath)) {
+      return res.status(404).json({ error: 'Resume file missing from server.' });
+    }
+
+    const ext = path.extname(filepath).toLowerCase();
+    let text = '';
+
+    if (ext === '.pdf') {
+      const dataBuffer = fs.readFileSync(filepath);
+      const data = await pdfParse(dataBuffer);
+      text = data.text;
+    } else if (ext === '.docx') {
+      const content = await mammoth.extractRawText({ path: filepath });
+      text = content.value;
+    } else {
+      return res.status(400).json({ error: 'Unsupported file type for text extraction. Only PDF and DOCX are supported.' });
+    }
+
+    res.json({ text });
+  } catch (err) {
+    console.error('Extract resume text error:', err);
+    res.status(500).json({ error: 'Failed to extract text from resume.' });
+  }
+};
+
+module.exports = { uploadResume, getMyResume, deleteResume, getResumeText };
