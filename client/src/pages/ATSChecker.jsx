@@ -1,49 +1,44 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import api from '../api/axios';
-
-console.log('API Key:', import.meta.env.VITE_GEMINI_API_KEY);
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY, {
-  apiVersion: 'v1'
-});
 
 export default function ATSChecker() {
   const { user } = useAuth();
   const { showToast } = useToast();
-  const [jobDescription, setJobDescription] = useState('');
-  const [resumeText, setResumeText] = useState('');
+  
+  const [jobs, setJobs] = useState([]);
+  const [selectedJobId, setSelectedJobId] = useState('');
+  
+  const [resumeType, setResumeType] = useState('profile');
+  const [resumeFile, setResumeFile] = useState(null);
+  
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [fetchingResume, setFetchingResume] = useState(false);
 
-  const fetchUploadedResume = async () => {
-    setFetchingResume(true);
-    try {
-      const res = await api.get('/resume/text');
-      if (res.data.text && res.data.text.trim()) {
-        setResumeText(res.data.text.trim());
-        showToast('Resume loaded successfully!', 'success');
-      } else {
-        showToast('Resume parsed, but no text was found.', 'error');
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const res = await api.get('/jobs');
+        setJobs(res.data.jobs);
+        if (res.data.jobs.length > 0) {
+          setSelectedJobId(res.data.jobs[0].id);
+        }
+      } catch (err) {
+        showToast('Failed to load jobs for selection.', 'error');
       }
-    } catch (err) {
-      if (err.response?.status === 404) {
-        showToast(err.response?.data?.error || 'No uploaded resume found. Please upload one in your profile.', 'error');
-      } else if (err.response?.status === 400) {
-        showToast(err.response?.data?.error || 'Unsupported file type. Please upload a PDF or DOCX.', 'error');
-      } else {
-        showToast('Failed to load resume. Server error.', 'error');
-      }
-    } finally {
-      setFetchingResume(false);
-    }
-  };
+    };
+    fetchJobs();
+  }, [showToast]);
 
   const handleCheck = async () => {
-    if (!jobDescription.trim() || !resumeText.trim()) {
-      showToast('Please provide both a resume and job description.', 'error');
+    if (!selectedJobId) {
+      showToast('Please select a job from the list.', 'error');
+      return;
+    }
+
+    if (resumeType === 'upload' && !resumeFile) {
+      showToast('Please upload a resume PDF to check against.', 'error');
       return;
     }
 
@@ -51,45 +46,27 @@ export default function ATSChecker() {
     setResult(null);
 
     try {
-      const prompt = `You are an ATS (Applicant Tracking System) expert. Analyze the following resume against the job description and provide:
-1. An ATS compatibility score out of 100
-2. A list of matching keywords found in both
-3. A list of important missing keywords
-4. 3-5 specific improvement suggestions
+      const formData = new FormData();
+      formData.append('jobId', selectedJobId);
+      if (resumeType === 'upload' && resumeFile) {
+        formData.append('resume', resumeFile);
+      }
 
-Resume:
-${resumeText}
+      const res = await api.post('/resume/analyze-ats', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
 
-Job Description:
-${jobDescription}
-
-Respond in this exact JSON format with no extra text:
-{
-  "score": <number>,
-  "matching_keywords": [<list of strings>],
-  "missing_keywords": [<list of strings>],
-  "suggestions": [<list of strings>]
-}`;
-
-      const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }]
-          })
-        }
-      );
-
-      const data = await res.json();
-      const text = data.candidates[0].content.parts[0].text;
-      const clean = text.replace(/```json|```/g, '').trim();
-      const parsed = JSON.parse(clean);
-      setResult(parsed);
+      setResult(res.data);
+      showToast('Analysis complete!', 'success');
     } catch (err) {
       console.error(err);
-      showToast('Failed to analyze resume. Please try again.', 'error');
+      if (err.response?.status === 404) {
+        showToast(err.response?.data?.error || 'Missing file or job.', 'error');
+      } else if (err.response?.status === 400) {
+        showToast(err.response?.data?.error || 'Invalid file type.', 'error');
+      } else {
+        showToast(err.response?.data?.error || 'Failed to analyze resume. Server error.', 'error');
+      }
     } finally {
       setLoading(false);
     }
@@ -104,51 +81,84 @@ Respond in this exact JSON format with no extra text:
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Resume ATS Checker</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Native PDF ATS Checker</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-            Check how well your resume matches a job description using AI.
+            Check how well your PDF resume matches real job descriptions using Google Gemini AI. No text copying required!
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          {/* Resume Input */}
+          {/* Job Selection Input */}
           <div className="card p-6">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Your Resume</h2>
-              <button 
-                onClick={fetchUploadedResume} 
-                disabled={fetchingResume}
-                className="text-xs text-primary-600 dark:text-primary-400 hover:underline font-medium focus:outline-none"
-              >
-                {fetchingResume ? 'Loading...' : 'Use Uploaded Resume'}
-              </button>
-            </div>
-            <textarea
-              value={resumeText}
-              onChange={(e) => setResumeText(e.target.value)}
-              placeholder="Paste your resume text here..."
-              className="input-field h-64 resize-none text-sm"
-            />
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Target Job</h2>
+            <select
+              value={selectedJobId}
+              onChange={(e) => setSelectedJobId(e.target.value)}
+              className="input-field w-full h-11"
+            >
+              <option value="" disabled>Select a job...</option>
+              {jobs.map(job => (
+                <option key={job.id} value={job.id}>
+                  {job.title} at {job.company}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-4">
+              Select a real job opening from the database to evaluate your compatibility.
+            </p>
           </div>
 
-          {/* Job Description Input */}
+          {/* Resume Input Mode Selection */}
           <div className="card p-6">
-            <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Job Description</h2>
-            <textarea
-              value={jobDescription}
-              onChange={(e) => setJobDescription(e.target.value)}
-              placeholder="Paste the job description here..."
-              className="input-field h-64 resize-none text-sm"
-            />
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Your Resume</h2>
+            
+            <div className="flex gap-4 mb-5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
+                <input 
+                  type="radio" 
+                  name="resumeType" 
+                  value="profile" 
+                  checked={resumeType === 'profile'} 
+                  onChange={() => setResumeType('profile')}
+                  className="text-primary-600 focus:ring-primary-500 w-4 h-4 cursor-pointer"
+                />
+                Use Profile Resume
+              </label>
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
+                <input 
+                  type="radio" 
+                  name="resumeType" 
+                  value="upload" 
+                  checked={resumeType === 'upload'} 
+                  onChange={() => setResumeType('upload')}
+                  className="text-primary-600 focus:ring-primary-500 w-4 h-4 cursor-pointer"
+                />
+                Upload New (PDF)
+              </label>
+            </div>
+
+            {resumeType === 'upload' && (
+              <input 
+                type="file" 
+                accept=".pdf" 
+                onChange={(e) => setResumeFile(e.target.files[0])}
+                className="block w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 dark:file:bg-gray-800 dark:file:text-gray-300 cursor-pointer"
+              />
+            )}
+            {resumeType === 'profile' && (
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                We will natively scan the existing resume file uploaded in your Seeker Profile.
+              </p>
+            )}
           </div>
         </div>
 
         <button
           onClick={handleCheck}
-          disabled={loading}
-          className="btn-primary w-full mb-8"
+          disabled={loading || !selectedJobId}
+          className="btn-primary w-full mb-8 py-3 font-semibold"
         >
-          {loading ? 'Analyzing...' : '🔍 Analyze Resume'}
+          {loading ? 'Analyzing directly from PDF...' : '🔍 Analyze Resume vs Job'}
         </button>
 
         {/* Results */}
@@ -156,46 +166,58 @@ Respond in this exact JSON format with no extra text:
           <div className="space-y-6">
 
             {/* Score */}
-            <div className="card p-6 text-center">
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">ATS Compatibility Score</p>
-              <p className={`text-6xl font-bold ${scoreColor}`}>{result.score}</p>
-              <p className="text-gray-400 text-sm mt-1">out of 100</p>
+            <div className="card p-6 text-center shadow-md">
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">ATS Compatibility Score</p>
+              <p className={`text-7xl font-extrabold tracking-tight ${scoreColor}`}>{result.score}</p>
+              <p className="text-gray-400 text-sm mt-2 font-medium">out of 100</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Matching Keywords */}
-              <div className="card p-6">
-                <h3 className="text-sm font-semibold text-green-600 dark:text-green-400 mb-3">✅ Matching Keywords</h3>
+              <div className="card p-6 shadow-sm">
+                <h3 className="text-sm font-bold text-green-600 dark:text-green-400 mb-4 flex items-center gap-2">
+                  <span>✅</span> Matching Keywords
+                </h3>
                 <div className="flex flex-wrap gap-2">
                   {result.matching_keywords.map((kw, i) => (
-                    <span key={i} className="bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-300 text-xs px-2 py-1 rounded-full">
+                    <span key={i} className="bg-green-50 dark:bg-green-900 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 text-xs font-medium px-2.5 py-1 rounded-full">
                       {kw}
                     </span>
                   ))}
+                  {result.matching_keywords.length === 0 && (
+                    <span className="text-sm text-gray-400 italic">No matching keywords found.</span>
+                  )}
                 </div>
               </div>
 
               {/* Missing Keywords */}
-              <div className="card p-6">
-                <h3 className="text-sm font-semibold text-red-600 dark:text-red-400 mb-3">❌ Missing Keywords</h3>
+              <div className="card p-6 shadow-sm">
+                <h3 className="text-sm font-bold text-red-600 dark:text-red-400 mb-4 flex items-center gap-2">
+                  <span>❌</span> Missing Keywords
+                </h3>
                 <div className="flex flex-wrap gap-2">
                   {result.missing_keywords.map((kw, i) => (
-                    <span key={i} className="bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-300 text-xs px-2 py-1 rounded-full">
+                    <span key={i} className="bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs font-medium px-2.5 py-1 rounded-full">
                       {kw}
                     </span>
                   ))}
+                  {result.missing_keywords.length === 0 && (
+                    <span className="text-sm text-gray-400 italic">No missing keywords!</span>
+                  )}
                 </div>
               </div>
             </div>
 
             {/* Suggestions */}
-            <div className="card p-6">
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">💡 Improvement Suggestions</h3>
-              <ul className="space-y-2">
+            <div className="card p-6 shadow-sm">
+              <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                <span>💡</span> Improvement Suggestions
+              </h3>
+              <ul className="space-y-3">
                 {result.suggestions.map((s, i) => (
-                  <li key={i} className="text-sm text-gray-600 dark:text-gray-400 flex gap-2">
-                    <span className="text-primary-500 font-bold shrink-0">{i + 1}.</span>
-                    {s}
+                  <li key={i} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-3 bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                    <span className="text-primary-500 font-extrabold shrink-0">{i + 1}.</span>
+                    <span className="leading-relaxed">{s}</span>
                   </li>
                 ))}
               </ul>

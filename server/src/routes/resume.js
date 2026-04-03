@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { uploadResume, getMyResume, deleteResume, getResumeText } = require('../controllers/resumeController');
+const { uploadResume, getMyResume, deleteResume, getResumeText, analyzeAts } = require('../controllers/resumeController');
 const { authenticate } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
@@ -14,5 +14,8 @@ router.get('/', authenticate, getMyResume);
 router.delete('/', authenticate, deleteResume);
 // GET /api/resume/text — extract text from my resume
 router.get('/text', authenticate, getResumeText);
+
+// POST /api/resume/analyze-ats — analyze provided or stored resume directly from PDF
+router.post('/analyze-ats', authenticate, upload.single('resume'), analyzeAts);
 
 module.exports = router;
