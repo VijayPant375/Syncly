@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import StatsCard from '../components/StatsCard';
@@ -6,6 +6,23 @@ import ErrorMessage from '../components/ErrorMessage';
 import { useToast } from '../context/ToastContext';
 import { SkeletonDashboard } from '../components/Skeleton';
 import EmptyState from '../components/EmptyState';
+import {
+  PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid,
+} from 'recharts';
+
+const STATUS_PALETTE = {
+  pending:  '#f59e0b',
+  reviewed: '#3b82f6',
+  accepted: '#10b981',
+  rejected: '#ef4444',
+};
+
+const BAR_COLOR = '#6366f1';
+
+// Custom label for pie slices
+const renderCustomLabel = ({ name, percent }) =>
+  percent > 0.04 ? `${(percent * 100).toFixed(0)}%` : '';
 
 export default function EmployerDashboard() {
   const { user } = useAuth();
@@ -23,6 +40,7 @@ export default function EmployerDashboard() {
   const [submitting, setSubmitting] = useState(false);
 
   const [applicants, setApplicants] = useState([]);
+  const [allApplicants, setAllApplicants] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
   const [loadingApplicants, setLoadingApplicants] = useState(false);
 
@@ -38,9 +56,39 @@ export default function EmployerDashboard() {
     }
   };
 
+  // Fetch all applicants across all jobs for analytics
+  const fetchAllApplicants = async (jobList) => {
+    try {
+      const results = await Promise.all(
+        jobList.map(j => api.get(`/applications/job/${j.id}`).then(r => r.data.applicants).catch(() => []))
+      );
+      setAllApplicants(results.flat());
+    } catch (_) {}
+  };
+
   useEffect(() => {
     fetchJobs();
   }, []);
+
+  useEffect(() => {
+    if (jobs.length > 0) fetchAllApplicants(jobs);
+  }, [jobs]);
+
+  // ── Analytics data ──────────────────────────────────────
+  const pieData = useMemo(() => {
+    const counts = { pending: 0, reviewed: 0, accepted: 0, rejected: 0 };
+    allApplicants.forEach(a => { if (counts[a.status] !== undefined) counts[a.status]++; });
+    return Object.entries(counts)
+      .map(([name, value]) => ({ name, value }))
+      .filter(d => d.value > 0);
+  }, [allApplicants]);
+
+  const barData = useMemo(() =>
+    jobs.map(j => ({
+      name: j.title.length > 14 ? j.title.slice(0, 14) + '…' : j.title,
+      Applicants: j.applicant_count || 0,
+    })),
+  [jobs]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -55,6 +103,7 @@ export default function EmployerDashboard() {
       setShowForm(false);
       setForm({ title: '', company: '', location: '', type: 'full-time', description: '', salary: '' });
       fetchJobs();
+      showToast('Job posted successfully!', 'success');
     } catch (err) {
       setFormError(err.response?.data?.errors?.[0]?.msg || err.response?.data?.error || 'Failed to post job.');
     } finally {
@@ -99,6 +148,10 @@ export default function EmployerDashboard() {
     try {
       await api.put(`/applications/${applicationId}/status`, { status });
       setApplicants(applicants.map(a =>
+        a.id === applicationId ? { ...a, status } : a
+      ));
+      // refresh allApplicants for chart
+      setAllApplicants(prev => prev.map(a =>
         a.id === applicationId ? { ...a, status } : a
       ));
       showToast('Application status updated.', 'success');
@@ -195,6 +248,97 @@ export default function EmployerDashboard() {
           />
         </div>
 
+        {/* ── Analytics Charts ──────────────────────────────── */}
+        {!loading && jobs.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+
+            {/* Pie — Application Status Breakdown */}
+            <div className="card p-6">
+              <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-4">
+                Application Status Breakdown
+              </h2>
+              {pieData.length === 0 ? (
+                <p className="text-sm text-gray-400 text-center py-8">No applications yet.</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={220}>
+                  <PieChart>
+                    <Pie
+                      data={pieData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={55}
+                      outerRadius={85}
+                      paddingAngle={3}
+                      dataKey="value"
+                      labelLine={false}
+                      label={renderCustomLabel}
+                    >
+                      {pieData.map(entry => (
+                        <Cell
+                          key={entry.name}
+                          fill={STATUS_PALETTE[entry.name] || '#94a3b8'}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'var(--tooltip-bg, #fff)',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '0.75rem',
+                        fontSize: '0.8rem',
+                      }}
+                      formatter={(value, name) => [value, name.charAt(0).toUpperCase() + name.slice(1)]}
+                    />
+                    <Legend
+                      iconType="circle"
+                      iconSize={8}
+                      formatter={(value) => value.charAt(0).toUpperCase() + value.slice(1)}
+                      wrapperStyle={{ fontSize: '0.75rem' }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+
+            {/* Bar — Jobs vs Applicants */}
+            <div className="card p-6">
+              <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-4">
+                Applicants per Job
+              </h2>
+              {barData.length === 0 ? (
+                <p className="text-sm text-gray-400 text-center py-8">No jobs yet.</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={barData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis
+                      dataKey="name"
+                      tick={{ fontSize: 11, fill: '#6b7280' }}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <YAxis
+                      allowDecimals={false}
+                      tick={{ fontSize: 11, fill: '#6b7280' }}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#fff',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '0.75rem',
+                        fontSize: '0.8rem',
+                      }}
+                    />
+                    <Bar dataKey="Applicants" fill={BAR_COLOR} radius={[6, 6, 0, 0]} maxBarSize={48} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Jobs list */}
         {loading && <SkeletonDashboard />}
         {error && <ErrorMessage message={error} />}
@@ -222,7 +366,7 @@ export default function EmployerDashboard() {
                       onClick={() => handleViewApplicants(job.id)}
                       className="btn-secondary text-sm"
                     >
-                      {selectedJob === job.id ? 'Hide Applicants' : 'View Applicants'}
+                      {selectedJob === job.id ? 'Hide Applicants' : `View Applicants (${job.applicant_count || 0})`}
                     </button>
                     <button
                       onClick={() => handleDeleteJob(job.id)}

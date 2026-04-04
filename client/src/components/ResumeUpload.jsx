@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
 
-export default function ResumeUpload() {
+export default function ResumeUpload({ onUploadSuccess } = {}) {
   const [resume, setResume] = useState(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -40,6 +40,7 @@ export default function ResumeUpload() {
       });
       setSuccess('Resume uploaded successfully.');
       fetchResume();
+      if (onUploadSuccess) onUploadSuccess();
     } catch (err) {
       setError(err.response?.data?.error || 'Upload failed.');
     } finally {
