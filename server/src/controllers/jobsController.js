@@ -5,7 +5,8 @@ const getAllJobs = async (req, res) => {
 
   try {
     let query = `
-      SELECT j.*, u.name AS employer_name
+      SELECT j.*, u.name AS employer_name,
+             (SELECT count(*)::int FROM applications a WHERE a.job_id = j.id) as applicant_count
       FROM jobs j
       JOIN users u ON j.employer_id = u.id
       WHERE 1=1
@@ -62,7 +63,8 @@ const getJobById = async (req, res) => {
 
   try {
     const result = await pool.query(
-      `SELECT j.*, u.name AS employer_name
+      `SELECT j.*, u.name AS employer_name,
+             (SELECT count(*)::int FROM applications a WHERE a.job_id = j.id) as applicant_count
        FROM jobs j
        JOIN users u ON j.employer_id = u.id
        WHERE j.id = $1`,

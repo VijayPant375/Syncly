@@ -105,12 +105,22 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <Link to="/jobs" className="btn-primary text-base px-8 py-3 shadow-lg shadow-primary-500/25">
-              Browse Jobs
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-              </svg>
-            </Link>
+            {(!user || user?.role === 'seeker') && (
+              <Link to="/jobs" className="btn-primary text-base px-8 py-3 shadow-lg shadow-primary-500/25">
+                Browse Jobs
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+              </Link>
+            )}
+            {user?.role === 'employer' && (
+              <Link to="/employer" className="btn-primary text-base px-8 py-3 shadow-lg shadow-primary-500/25">
+                Go to Dashboard
+                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+              </Link>
+            )}
             {!user && (
               <Link to="/register" className="btn-secondary text-base px-8 py-3">
                 Create Free Account
