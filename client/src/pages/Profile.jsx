@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import api from '../api/axios';
+import { SkeletonProfile } from '../components/Skeleton';
 
 export default function Profile() {
   const { user } = useAuth();
@@ -58,11 +59,7 @@ export default function Profile() {
     ? user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
     : '?';
 
-  if (loading) return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-      <p className="text-gray-400">Loading...</p>
-    </div>
-  );
+  if (loading) return <SkeletonProfile />;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">

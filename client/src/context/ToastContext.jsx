@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { setToastFunction } from '../api/axios';
 
 const ToastContext = createContext();
 
@@ -14,6 +15,11 @@ export const ToastProvider = ({ children }) => {
       setToasts(prev => prev.filter(t => t.id !== id));
     }, 3500);
   }, []);
+
+  // Register toast function with axios interceptor
+  useEffect(() => {
+    setToastFunction(showToast);
+  }, [showToast]);
 
   return (
     <ToastContext.Provider value={{ showToast }}>

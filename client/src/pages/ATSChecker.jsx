@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import api from '../api/axios';
+import { SkeletonATS } from '../components/Skeleton';
 
 export default function ATSChecker() {
   const { user } = useAuth();
@@ -15,9 +16,11 @@ export default function ATSChecker() {
   
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingJobs, setLoadingJobs] = useState(true);
 
   useEffect(() => {
     const fetchJobs = async () => {
+      setLoadingJobs(true); // Add this
       try {
         const res = await api.get('/jobs');
         setJobs(res.data.jobs);
@@ -26,6 +29,8 @@ export default function ATSChecker() {
         }
       } catch (err) {
         showToast('Failed to load jobs for selection.', 'error');
+      } finally {
+        setLoadingJobs(false); // Add this
       }
     };
     fetchJobs();
@@ -74,6 +79,8 @@ export default function ATSChecker() {
 
   const scoreColor = result?.score >= 75 ? 'text-green-500' :
     result?.score >= 50 ? 'text-yellow-500' : 'text-red-500';
+
+  if (loadingJobs) return <SkeletonATS />;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
