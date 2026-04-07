@@ -99,6 +99,7 @@ export default function SeekerDashboard() {
   const [hasResume, setHasResume] = useState(false);
   const [profile, setProfile] = useState(null);
   const [withdrawingId, setWithdrawingId] = useState(null);
+  const [pendingWithdrawal, setPendingWithdrawal] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -146,6 +147,15 @@ export default function SeekerDashboard() {
     } finally {
       setWithdrawingId(null);
     }
+  };
+
+  const openWithdrawModal = (application) => {
+    setPendingWithdrawal(application);
+  };
+
+  const closeWithdrawModal = () => {
+    if (withdrawingId) return;
+    setPendingWithdrawal(null);
   };
 
   return (
@@ -236,14 +246,15 @@ export default function SeekerDashboard() {
                     </div>
                     {app.status !== 'accepted' && (
                       <div className="mt-4 flex justify-end">
-                        <LoadingButton
-                          onClick={() => handleWithdraw(app.id)}
-                          className="text-sm font-medium text-red-600 hover:text-red-700 px-3 py-2"
-                          isLoading={withdrawingId === app.id}
-                          loadingText="Withdrawing..."
+                        <button
+                          onClick={() => openWithdrawModal(app)}
+                          className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 transition-colors hover:bg-red-100 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-900/40"
                         >
+                          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
                           Withdraw Application
-                        </LoadingButton>
+                        </button>
                       </div>
                     )}
                   </div>
@@ -278,6 +289,68 @@ export default function SeekerDashboard() {
         )}
 
       </div>
+
+      {pendingWithdrawal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4 backdrop-blur-sm">
+          <div className="w-full max-w-md overflow-hidden rounded-3xl border border-red-100 bg-white shadow-2xl dark:border-red-900/50 dark:bg-gray-900">
+            <div className="bg-gradient-to-r from-red-500 to-rose-500 p-5 text-white">
+              <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-white/20">
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v4m0 4h.01M10.29 3.86l-8 14A1 1 0 003.17 19h17.66a1 1 0 00.88-1.49l-8-14a1 1 0 00-1.76 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold">Withdraw this application?</h3>
+              <p className="mt-1 text-sm text-red-50/90">
+                This will remove your application from the employer's review queue.
+              </p>
+            </div>
+
+            <div className="p-5">
+              <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4 dark:border-gray-800 dark:bg-gray-950/70">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                  {pendingWithdrawal.title}
+                </p>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  {pendingWithdrawal.company} · {pendingWithdrawal.location}
+                </p>
+                <p className="mt-3 text-xs uppercase tracking-[0.18em] text-gray-400 dark:text-gray-500">
+                  Current status
+                </p>
+                <span className={`mt-2 inline-flex rounded-full px-3 py-1 text-xs font-medium capitalize ${STATUS_COLORS[pendingWithdrawal.status]}`}>
+                  {pendingWithdrawal.status}
+                </span>
+              </div>
+
+              <p className="mt-4 text-sm leading-6 text-gray-600 dark:text-gray-300">
+                You can apply again later only if the job is still open. If you still want to proceed, confirm below.
+              </p>
+
+              <div className="mt-6 flex gap-3">
+                <button
+                  type="button"
+                  onClick={closeWithdrawModal}
+                  disabled={withdrawingId === pendingWithdrawal.id}
+                  className="flex-1 rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+                >
+                  Keep Application
+                </button>
+                <LoadingButton
+                  type="button"
+                  onClick={async () => {
+                    await handleWithdraw(pendingWithdrawal.id);
+                    setPendingWithdrawal(null);
+                  }}
+                  className="flex-1 rounded-xl bg-red-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-700"
+                  isLoading={withdrawingId === pendingWithdrawal.id}
+                  loadingText="Withdrawing..."
+                >
+                  Confirm Withdrawal
+                </LoadingButton>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
