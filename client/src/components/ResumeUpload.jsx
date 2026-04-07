@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
+import LoadingButton from './LoadingButton';
 
 export default function ResumeUpload({ onUploadSuccess } = {}) {
   const [resume, setResume] = useState(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -50,12 +52,15 @@ export default function ResumeUpload({ onUploadSuccess } = {}) {
 
   const handleDelete = async () => {
     if (!window.confirm('Delete your resume?')) return;
+    setDeleting(true);
     try {
       await api.delete('/resume');
       setResume(null);
       setSuccess('Resume deleted.');
     } catch (err) {
       setError('Failed to delete resume.');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -86,19 +91,36 @@ export default function ResumeUpload({ onUploadSuccess } = {}) {
             </p>
           </div>
           <div className="flex gap-2">
-            <label className="btn-secondary text-sm cursor-pointer">
+            <label className={`btn-secondary text-sm cursor-pointer inline-flex items-center justify-center gap-2 ${uploading ? 'opacity-80 pointer-events-none' : ''}`}>
+              {uploading && (
+                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                </svg>
+              )}
               Replace
-              <input type="file" accept=".pdf,.doc,.docx" onChange={handleUpload} className="hidden" />
+              <input type="file" accept=".pdf,.doc,.docx" onChange={handleUpload} disabled={uploading} className="hidden" />
             </label>
-            <button onClick={handleDelete} className="text-sm text-red-500 hover:text-red-700 px-3 py-2">
+            <LoadingButton
+              onClick={handleDelete}
+              className="text-sm text-red-500 hover:text-red-700 px-3 py-2"
+              isLoading={deleting}
+              loadingText="Deleting..."
+            >
               Delete
-            </button>
+            </LoadingButton>
           </div>
         </div>
       ) : (
         <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center">
           <p className="text-gray-400 text-sm mb-3">No resume uploaded yet</p>
-          <label className="btn-primary text-sm cursor-pointer">
+          <label className={`btn-primary text-sm cursor-pointer inline-flex items-center justify-center gap-2 ${uploading ? 'opacity-80 pointer-events-none' : ''}`}>
+            {uploading && (
+              <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+              </svg>
+            )}
             {uploading ? 'Uploading...' : 'Upload Resume'}
             <input
               type="file"

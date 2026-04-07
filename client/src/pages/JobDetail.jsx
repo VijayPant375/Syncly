@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import LoadingButton from '../components/LoadingButton';
 import { SkeletonJobDetail } from '../components/Skeleton';
 
 export default function JobDetail() {
@@ -184,16 +185,18 @@ useEffect(() => {
               </div>
 
               <div className="flex gap-3">
-                <button
+                <LoadingButton
                   type="submit"
-                  disabled={applying}
                   className="btn-primary flex-1"
+                  isLoading={applying}
+                  loadingText="Submitting..."
                 >
-                  {applying ? 'Submitting...' : 'Submit Application'}
-                </button>
+                  Submit Application
+                </LoadingButton>
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
+                  disabled={applying}
                   className="btn-secondary flex-1"
                 >
                   Cancel

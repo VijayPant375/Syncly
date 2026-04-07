@@ -3,6 +3,7 @@ import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import StatsCard from '../components/StatsCard';
 import ErrorMessage from '../components/ErrorMessage';
+import LoadingButton from '../components/LoadingButton';
 import { useToast } from '../context/ToastContext';
 import { SkeletonDashboard } from '../components/Skeleton';
 import EmptyState from '../components/EmptyState';
@@ -38,11 +39,13 @@ export default function EmployerDashboard() {
   });
   const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [deletingJobId, setDeletingJobId] = useState(null);
 
   const [applicants, setApplicants] = useState([]);
   const [allApplicants, setAllApplicants] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
   const [loadingApplicants, setLoadingApplicants] = useState(false);
+  const [updatingApplicationId, setUpdatingApplicationId] = useState(null);
 
   const fetchJobs = async () => {
     try {
@@ -113,6 +116,7 @@ export default function EmployerDashboard() {
 
   const handleDeleteJob = async (jobId) => {
     if (!window.confirm('Are you sure you want to delete this job?')) return;
+    setDeletingJobId(jobId);
     try {
       await api.delete(`/jobs/${jobId}`);
       fetchJobs();
@@ -123,6 +127,8 @@ export default function EmployerDashboard() {
       showToast('Job deleted successfully.', 'success');
     } catch (err) {
       showToast('Failed to delete job.', 'error');
+    } finally {
+      setDeletingJobId(null);
     }
   };
 
@@ -145,6 +151,7 @@ export default function EmployerDashboard() {
   };
 
   const handleStatusChange = async (applicationId, status) => {
+    setUpdatingApplicationId(applicationId);
     try {
       await api.put(`/applications/${applicationId}/status`, { status });
       setApplicants(applicants.map(a =>
@@ -157,6 +164,8 @@ export default function EmployerDashboard() {
       showToast('Application status updated.', 'success');
     } catch (err) {
       showToast('Failed to update status.', 'error');
+    } finally {
+      setUpdatingApplicationId(null);
     }
   };
 
@@ -225,9 +234,14 @@ export default function EmployerDashboard() {
                   className="input-field h-32 resize-none"
                   placeholder="Describe the role, requirements and responsibilities..." required />
               </div>
-              <button type="submit" disabled={submitting} className="btn-primary">
-                {submitting ? 'Posting...' : 'Post Job'}
-              </button>
+              <LoadingButton
+                type="submit"
+                className="btn-primary"
+                isLoading={submitting}
+                loadingText="Posting..."
+              >
+                Post Job
+              </LoadingButton>
             </form>
           </div>
         )}
@@ -368,12 +382,14 @@ export default function EmployerDashboard() {
                     >
                       {selectedJob === job.id ? 'Hide Applicants' : `View Applicants (${job.applicant_count || 0})`}
                     </button>
-                    <button
+                    <LoadingButton
                       onClick={() => handleDeleteJob(job.id)}
                       className="text-sm text-red-500 hover:text-red-700 px-3 py-2"
+                      isLoading={deletingJobId === job.id}
+                      loadingText="Deleting..."
                     >
                       Delete
-                    </button>
+                    </LoadingButton>
                   </div>
                 </div>
 
@@ -400,6 +416,7 @@ export default function EmployerDashboard() {
                             <select
                               value={app.status}
                               onChange={(e) => handleStatusChange(app.id, e.target.value)}
+                              disabled={updatingApplicationId === app.id}
                               className="input-field text-xs w-32"
                             >
                               <option value="pending">Pending</option>

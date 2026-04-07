@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import StatsCard from '../components/StatsCard';
 import ErrorMessage from '../components/ErrorMessage';
+import LoadingButton from '../components/LoadingButton';
 import { useToast } from '../context/ToastContext';
 
 export default function AdminDashboard() {
@@ -11,6 +12,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
+  const [deletingUserId, setDeletingUserId] = useState(null);
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -35,12 +37,15 @@ export default function AdminDashboard() {
 
   const handleDeleteUser = async (id, name) => {
     if (!window.confirm(`Delete user "${name}"? This cannot be undone.`)) return;
+    setDeletingUserId(id);
     try {
       await api.delete(`/admin/users/${id}`);
       setUsers(users.filter(u => u.id !== id));
       showToast('User deleted successfully.', 'success');
     } catch (err) {
       showToast(err.response?.data?.error || 'Failed to delete user.', 'error');
+    } finally {
+      setDeletingUserId(null);
     }
   };
 
@@ -167,12 +172,14 @@ export default function AdminDashboard() {
                       {new Date(user.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4">
-                      <button
+                      <LoadingButton
                         onClick={() => handleDeleteUser(user.id, user.name)}
                         className="text-red-500 hover:text-red-700 text-xs font-medium"
+                        isLoading={deletingUserId === user.id}
+                        loadingText="Deleting..."
                       >
                         Delete
-                      </button>
+                      </LoadingButton>
                     </td>
                   </tr>
                 ))}

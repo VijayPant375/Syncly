@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import api from '../api/axios';
+import LoadingButton from '../components/LoadingButton';
 import { SkeletonProfile } from '../components/Skeleton';
 
 export default function Profile() {
@@ -146,13 +147,14 @@ export default function Profile() {
             />
           </div>
 
-          <button
+          <LoadingButton
             onClick={handleSave}
-            disabled={saving}
             className="btn-primary w-full"
+            isLoading={saving}
+            loadingText="Saving..."
           >
-            {saving ? 'Saving...' : 'Save Profile'}
-          </button>
+            Save Profile
+          </LoadingButton>
         </div>
 
         {/* Skills Preview */}

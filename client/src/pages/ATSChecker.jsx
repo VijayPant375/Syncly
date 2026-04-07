@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import api from '../api/axios';
+import LoadingButton from '../components/LoadingButton';
 import { SkeletonATS } from '../components/Skeleton';
 
 export default function ATSChecker() {
@@ -160,13 +161,15 @@ export default function ATSChecker() {
           </div>
         </div>
 
-        <button
+        <LoadingButton
           onClick={handleCheck}
-          disabled={loading || !selectedJobId}
           className="btn-primary w-full mb-8 py-3 font-semibold"
+          isLoading={loading}
+          loadingText="Analyzing directly from PDF..."
+          disabled={!selectedJobId}
         >
-          {loading ? 'Analyzing directly from PDF...' : '🔍 Analyze Resume vs Job'}
-        </button>
+          Analyze Resume vs Job
+        </LoadingButton>
 
         {/* Results */}
         {result && (
