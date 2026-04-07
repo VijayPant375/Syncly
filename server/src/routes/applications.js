@@ -5,6 +5,7 @@ const router = express.Router();
 const {
   applyToJob,
   getMyApplications,
+  withdrawApplication,
   getJobApplicants,
   updateApplicationStatus,
 } = require('../controllers/applicationsController');
@@ -15,6 +16,7 @@ router.post('/', authenticate, authorize('seeker'), validateApplication, validat
 
 // GET /api/applications/mine — seeker sees their applications
 router.get('/mine', authenticate, authorize('seeker'), getMyApplications);
+router.delete('/:id', authenticate, authorize('seeker'), withdrawApplication);
 
 // GET /api/applications/job/:jobId — employer sees applicants for a job
 router.get('/job/:jobId', authenticate, authorize('employer', 'admin'), getJobApplicants);

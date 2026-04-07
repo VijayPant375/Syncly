@@ -54,6 +54,36 @@ const getMyApplications = async (req, res) => {
   }
 };
 
+const withdrawApplication = async (req, res) => {
+  const { id } = req.params;
+  const seekerId = req.user.id;
+
+  try {
+    const existing = await pool.query(
+      'SELECT id, status FROM applications WHERE id = $1 AND seeker_id = $2',
+      [id, seekerId]
+    );
+
+    if (existing.rows.length === 0) {
+      return res.status(404).json({ error: 'Application not found.' });
+    }
+
+    if (existing.rows[0].status === 'accepted') {
+      return res.status(400).json({ error: 'Accepted applications cannot be withdrawn.' });
+    }
+
+    await pool.query(
+      'DELETE FROM applications WHERE id = $1 AND seeker_id = $2',
+      [id, seekerId]
+    );
+
+    res.json({ message: 'Application withdrawn successfully.' });
+  } catch (err) {
+    console.error('Withdraw application error:', err);
+    res.status(500).json({ error: 'Server error.' });
+  }
+};
+
 const getJobApplicants = async (req, res) => {
   const { jobId } = req.params;
   const employerId = req.user.id;
@@ -121,6 +151,7 @@ const updateApplicationStatus = async (req, res) => {
 module.exports = {
   applyToJob,
   getMyApplications,
+  withdrawApplication,
   getJobApplicants,
   updateApplicationStatus,
 };

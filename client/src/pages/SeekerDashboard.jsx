@@ -2,8 +2,10 @@ import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import ResumeUpload from '../components/ResumeUpload';
 import ErrorMessage from '../components/ErrorMessage';
+import LoadingButton from '../components/LoadingButton';
 import { SkeletonDashboard } from '../components/Skeleton';
 import EmptyState from '../components/EmptyState';
 import JobCard from '../components/JobCard';
@@ -89,12 +91,14 @@ function ProfileCompletion({ user, applications, hasResume, profile }) {
 // ── Main Dashboard ───────────────────────────────────────────────
 export default function SeekerDashboard() {
   const { user } = useAuth();
+  const { showToast } = useToast();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [savedJobs, setSavedJobs] = useState([]);
   const [hasResume, setHasResume] = useState(false);
   const [profile, setProfile] = useState(null);
+  const [withdrawingId, setWithdrawingId] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -130,6 +134,19 @@ export default function SeekerDashboard() {
   }, []);
 
   const statuses = ['pending', 'reviewed', 'accepted', 'rejected'];
+
+  const handleWithdraw = async (applicationId) => {
+    setWithdrawingId(applicationId);
+    try {
+      await api.delete(`/applications/${applicationId}`);
+      setApplications((prev) => prev.filter((app) => app.id !== applicationId));
+      showToast('Application withdrawn.', 'success');
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Failed to withdraw application.', 'error');
+    } finally {
+      setWithdrawingId(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -217,6 +234,18 @@ export default function SeekerDashboard() {
                         {app.status}
                       </span>
                     </div>
+                    {app.status !== 'accepted' && (
+                      <div className="mt-4 flex justify-end">
+                        <LoadingButton
+                          onClick={() => handleWithdraw(app.id)}
+                          className="text-sm font-medium text-red-600 hover:text-red-700 px-3 py-2"
+                          isLoading={withdrawingId === app.id}
+                          loadingText="Withdrawing..."
+                        >
+                          Withdraw Application
+                        </LoadingButton>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
